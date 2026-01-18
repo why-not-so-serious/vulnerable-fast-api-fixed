@@ -23,3 +23,18 @@ async def get_user(user_id: str):
     result = cursor.fetchone()
     conn.close()
     return {"user": result}
+
+
+@app.delete("/admin/delete-user/{user_id}")
+async def delete_user(user_id: str):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM users WHERE id = {user_id}")
+    conn.commit()
+    conn.close()
+    return {"message": "User deleted"}
+
+@app.post("/login")
+async def login(username: str, password: str):
+    token = jwt.encode({"user": username}, JWT_SECRET, algorithm="HS256")
+    return {"token": token}
